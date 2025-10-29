@@ -38,7 +38,7 @@ class Lexer:
             ('MULTIPLY',   r'\*'),
             ('DIVIDE',     r'/'),
             ('MODULO',     r'%'),
-            ('EQ',         r'=='),
+            ('EQ',         r'=='),  
             ('NEQ',        r'!='),
             ('GREATER',    r'>'),
             ('LESS',       r'<'),
@@ -52,7 +52,10 @@ class Lexer:
         ]
         # A single, combined regex for efficient matching.
         self.token_regex = '|'.join(f'(?P<{name}>{regex})' for name, regex in self.token_specs)
-
+        '''Essentially what the above code does is that it defines the rules for what counts as amatch so it iterates through token_space in pairs like 'NUMBER', r'\d+' where name represents 'NUMBER' and regex reps r'\d+. Then it looks at all the keywords and puts the matches together like this (?P<IDENTIFIER>[A-Za-z_][A-Za-z0-9_]*) and then joins it using |. Therefore its jsut one long regex expression indicating the rules for when the code matches 
+        SINCE THIS IS A VARIABLE, we dont pass it in code, infact when we are iterating we just call this function so we can check.
+        
+'''
     # TODO: Implement this function
     def tokenize(self) -> List[Tuple[str, Any]]:
         """
