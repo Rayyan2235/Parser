@@ -75,6 +75,15 @@ class Lexer:
         for match in re.finditer(self.token_regex, self.code):
             token_type = match.lastgroup
             value = match.group(token_type)
+            if token_type == 'SKIP': #Handles whitespace
+                continue
+            if token_type == 'NUMBER': #Convert num strings to an integer
+                value = int(value)
+            elif token_type == 'MISMATCH':
+                return (f'Unpexted behaviour {value}')
+            self.tokens.append((token_type, value))
+        self.tokens.append(('EOF', None))
+        return self.tokens
         
 
 class Parser:
