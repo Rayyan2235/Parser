@@ -72,7 +72,10 @@ class Lexer:
         The process ends when the entire code string is consumed, at which point an
         'EOF' (End of File) token is appended to signify the end of the input.
         """
-        pass
+        for match in re.finditer(self.token_regex, self.code):
+            token_type = match.lastgroup
+            value = match.group(token_type)
+        
 
 class Parser:
     """
