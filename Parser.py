@@ -234,7 +234,11 @@ class Parser:
         parentheses. Finally, it consumes the closing parenthesis 'RPAREN' and returns a
         `PrintStatement` AST node containing the list of arguments.
         """
-        pass
+        self.expect("PRINT")
+        self.expect("LPAREN")
+        arguments = self.parse_arg_list()
+        self.expect("RPAREN")
+        return PrintStatement(arguments)
 
     # TODO: Implement this function
     def parse_block(self) -> Block:
