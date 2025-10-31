@@ -123,6 +123,12 @@ class Parser:
             return token
         else:
             raise SyntaxError(f"Expected {kind} but got {self.current_token()[0]} at position {self.pos}")
+        
+        ''' SO FAR HOW THE SYSTEM WORKS:
+
+                So the tokenize() is going to take convert the strings into lexeme/tokens by iterating over the keyword list and then comparing it to the codebase. After the Parser func, creates an empty list and holds the current token/lexeme and appends it to call parse_Statements() to parse it into a treee. and then iterates through the tokens and keeps calling parse_statements
+
+        '''
 
     def parse(self) -> List[ASTNode]:
         """
@@ -155,7 +161,15 @@ class Parser:
         - If it's a 'FOR', it calls `parse_for_stmt()`.
         - If it's a 'PRINT', it calls `parse_print_stmt()`.
         This routing is the essence of a top-down recursive descent parser.
+
         """
+        if self.current_token()[0] == 'IDENTIFIER':
+            return self.parse_assignment()
+        
+        elif self.current_token()[0] == 'IF':
+            return self.parse_if_stmt()
+        elif self.current_token()[0] == 'FOR':
+            return self.parse_for_stmt()
         pass
 
     # TODO: Implement this function
