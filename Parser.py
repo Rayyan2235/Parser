@@ -170,7 +170,10 @@ class Parser:
             return self.parse_if_stmt()
         elif self.current_token()[0] == 'FOR':
             return self.parse_for_stmt()
-        pass
+        elif self.current_token()[0] == 'PRINT':
+            return self.parse_print_stmt()
+        else:
+            raise SyntaxError(f"Unexpected statement start: {self.current_token()[0] } at position {self.pos}")
 
     # TODO: Implement this function
     def parse_if_stmt(self) -> IfStatement:
@@ -184,7 +187,19 @@ class Parser:
         handle the optional else part, which also has a colon and a block. It constructs and
         returns an `IfStatement` AST node with the condition, then-block, and optional else-block.
         """
-        pass
+
+        self.expect('IF') # Consumes the IF token
+        condition = self.parse_boolean_expression() # Parses the condition expression
+        self.expect('COLON') # Consumes the COLON token as its expecting it
+        then_block = self.parse_block() # Parses the block of statements for the 'then' part
+        else_block = None # Initialize else_block to None
+         # Check for an optional ELSE part
+        if self.current_token()[0] == 'ELSE':
+            self.expect('ELSE')
+            self.expect('COLON')
+            else_block = self.parse_block()
+        return IfStatement(condition, then_block, else_block)
+
 
     # TODO: Implement this function
     def parse_for_stmt(self) -> ForStatement:
