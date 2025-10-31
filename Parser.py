@@ -250,7 +250,14 @@ class Parser:
         `parse_statement()` to parse all statements until it reaches a token that signals the end
         of the block (in our simplified language, 'ELSE' or the end of the file). It returns a
         `Block` AST node containing the list of parsed statements.
+
+
         """
+        statements = []
+        while self.current_token()[0] not in ('ELSE', 'EOF'):
+            statements.append(self.parse_statement())
+
+        return Block(statements)
         pass
 
     # TODO: Implement this function
