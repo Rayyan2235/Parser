@@ -211,7 +211,18 @@ class Parser:
         'TO', an expression for the end value, and a 'COLON'. Finally, it calls `parse_block()`
         for the loop's body. It bundles all this information into a `ForStatement` AST node.
         """
-        pass
+        # for_stmt ::= 'for' IDENTIFIER '=' expression 'to' expression ':' block - GRAMMAR RULE that we are trying to follow
+
+        self.expect("FOR")  # Consume the 'FOR' token
+        iterator_token = self.expect("IDENTIFIER")  # Consume the loop variable
+        self.expect("EQUALS")  # Consume the '=' token
+        start_expr = self.parse_expression()  # Parse the start expression
+        self.expect("TO")  # Consume the 'TO' token
+        end_expr = self.parse_expression()  # Parse the end expression
+        self.expect("COLON")  # Consume the ':' token
+        block = self.parse_block()  # Parse the loop body
+        return ForStatement(iterator_token[1], start_expr, end_expr, block)
+        
 
     # TODO: Implement this function
     def parse_print_stmt(self) -> PrintStatement:
