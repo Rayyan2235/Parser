@@ -23,8 +23,7 @@ class Lexer:
         # A list of tuples where each tuple contains a token name and a regex pattern.
         # The order is important, as it determines matching priority.
         self.token_specs = [
-            ('NUMBER',     r'\d+'),
-            ('IDENTIFIER', r'[A-Za-z_][A-Za-z0-9_]*'),
+            ('NUMBER',     r'\d+'),            
             ('IF',         r'if'),
             ('ELSE',       r'else'),
             ('FOR',        r'for'),
@@ -33,6 +32,7 @@ class Lexer:
             ('AND',        r'and'),
             ('OR',         r'or'),
             ('NOT',        r'not'),
+            ('IDENTIFIER', r'[A-Za-z_][A-Za-z0-9_]*'),
             ('PLUS',       r'\+'),
             ('MINUS',      r'-'),
             ('MULTIPLY',   r'\*'),
@@ -174,6 +174,23 @@ class Parser:
             return self.parse_print_stmt()
         else:
             raise SyntaxError(f"Unexpected statement start: {self.current_token()[0] } at position {self.pos}")
+    
+    def parse_assignment(self) -> Assignment:
+        """
+        Why this function is needed:
+        To parse simple assignment statements following the grammar rule:
+        assign_stmt ::= IDENTIFIER '=' expression
+
+        What this function does:
+        1. Consumes an 'IDENTIFIER' (the variable being assigned).
+        2. Expects and consumes the '=' token.
+        3. Calls `parse_expression()` to parse the right-hand side.
+        4. Returns an Assignment AST node representing the statement.
+        """
+        identifier = self.expect('IDENTIFIER')
+        self.expect('EQUALS')
+        expr = self.parse_expression()
+        return Assignment(identifier, expr)
 
     # TODO: Implement this function
     def parse_if_stmt(self) -> IfStatement:
@@ -221,7 +238,7 @@ class Parser:
         end_expr = self.parse_expression()  # Parse the end expression
         self.expect("COLON")  # Consume the ':' token
         block = self.parse_block()  # Parse the loop body
-        return ForStatement(iterator_token[1], start_expr, end_expr, block)
+        return ForStatement(iterator_token, start_expr, end_expr, block)
         
 
     # TODO: Implement this function
@@ -293,7 +310,7 @@ class Parser:
         while self.current_token()[0] == 'OR':
             op = self.expect('OR')
             right = self.parse_boolean_term()
-            node = BinaryOperation(node, op, right)
+            node = LogicalOperation(node, op, right)
         return node
 
     # TODO: Implement this function
@@ -310,7 +327,7 @@ class Parser:
         while self.current_token()[0] == 'AND':
             op = self.expect('AND')
             right = self.parse_boolean_factor()
-            node = BinaryOperation(node, op, right)
+            node = LogicalOperation(node, op, right)
         return node
         
 
