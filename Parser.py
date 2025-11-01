@@ -418,4 +418,17 @@ class Parser:
            to parse the entire expression inside the parentheses, and then expects a closing 'RPAREN'.
            This allows for manually overriding operator precedence (e.g., `(a + b) * c`).
         """
-        pass
+        tok_type, value = self.current_token()
+        if tok_type == 'NUMBER':
+            self.advance()
+            return ('NUMBER', value)
+        elif tok_type == 'IDENTIFIER':
+            self.advance()
+            return ('IDENTIFIER', value)
+        elif tok_type == 'LPAREN':
+            self.expect('LPAREN')
+            node = self.parse_boolean_expression()
+            self.expect('RPAREN')
+            return node
+        else:
+            raise SyntaxError(f"Unexpected token in expression: {tok_type}")
