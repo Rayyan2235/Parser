@@ -355,7 +355,13 @@ class Parser:
         calls `parse_term()` to get a higher-precedence operand. It then loops as long as it
         sees a 'PLUS' or 'MINUS' token, building `BinaryOperation` nodes in a left-associative way.
         """
-        pass
+        node = self.parse_expression()
+        while self.current_token()[0] in ('EQ', 'NEQ', 'LESS', 'GREATER'):
+            op = self.current_token()
+            self.advance()
+            right = self.parse_expression()
+            node = BinaryOperation(node, op, right)
+        return node
 
     # TODO: Implement this function
     def parse_term(self) -> ExprType:
