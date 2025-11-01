@@ -258,7 +258,7 @@ class Parser:
             statements.append(self.parse_statement())
 
         return Block(statements)
-        pass
+
 
     # TODO: Implement this function
     def parse_arg_list(self) -> List[ExprType]:
@@ -270,7 +270,12 @@ class Parser:
         continues as long as the current token is a 'COMMA'. Inside the loop, it consumes the
         comma and parses the next expression. It returns a list of all the parsed expression nodes.
         """
-        pass
+        args = [self.parse_expression()]
+        while self.current_token()[0] == 'COMMA':
+            self.expect('COMMA')
+            args.append(self.parse_expression())
+        return args
+
 
     # TODO: Implement this function
     def parse_boolean_expression(self) -> ExprType:
@@ -284,7 +289,12 @@ class Parser:
         node with the left side, the 'OR' operator, and the result of parsing the right side.
         This left-associative structure correctly handles chains like `A or B or C`.
         """
-        pass
+        node = self.parse_boolean_term()
+        while self.current_token()[0] == 'OR':
+            op = self.expect('OR')
+            right = self.parse_boolean_term()
+            node = BinaryOperation(node, op, right)
+        return node
 
     # TODO: Implement this function
     def parse_boolean_term(self) -> ExprType:
