@@ -378,7 +378,13 @@ class Parser:
         What this function does: It calls `parse_factor()` to get its operands and loops on
         '*', '/', and '%' operators. This ensures that `a + b * c` is correctly parsed as `a + (b * c)`.
         """
-        pass
+        node = self.parse_factor()
+        while self.current_token()[0] in ('MULTIPLY', 'DIVIDE', 'MODULO'):
+            op = self.current_token()
+            self.advance()
+            right = self.parse_factor()
+            node = BinaryOperation(node, op, right)
+        return node
 
     # TODO: Implement this function
     def parse_factor(self) -> ExprType:
@@ -390,7 +396,13 @@ class Parser:
         recursively calls `parse_factor()` for the operand, and returns a `UnaryOperation` node.
         If not, it calls `parse_primary()` for the highest-precedence elements.
         """
-        pass
+        if self.current_token()[0] in ('PLUS', 'MINUS'):
+            op = self.current_token()
+            self.advance()
+            right = self.parse_factor()
+            return UnaryOperation(op, right)
+        else:
+            return self.parse_primary()
 
     # TODO: Implement this function
     def parse_primary(self) -> ExprType:
